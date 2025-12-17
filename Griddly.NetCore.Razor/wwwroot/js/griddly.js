@@ -648,21 +648,25 @@
                 $(".griddly-filters-inline .filter-trigger", this.$element).each(function ()
                 {
                     var filter = $(this);
+                    var popoverViaData = filter.data('bs.popover'); /*BS3 and 4*/
+                    var popoverWidget = bootstrap.Popover.getInstance(filter); /*BS5*/
+                    var tip;
 
-                    if (filter.data('bs.popover'))
-                    {
-                        var tip;
-                        if ($.isFunction(filter.data('bs.popover').tip))
-                            tip = filter.data('bs.popover').tip(); /*BS3*/
+                    if (popoverViaData) {
+                        if ($.isFunction(popoverViaData.tip))
+                            tip = popoverViaData.tip(); /*BS3*/
                         else
-                            tip = filter.data('bs.popover').tip; /*BS4*/
+                            tip = popoverViaData.tip; /*BS4*/
+                    }
+                    else if (popoverWidget) {
+                        tip = popoverWidget.tip; /*BS5*/
+                    }
 
-                        if ($(tip).hasClass('in') || $(tip).hasClass('show')/*BS4*/) {
-                            hidePopover(filter, self.bootstrapVersion);
+                    if ($(tip).hasClass('in') || $(tip).hasClass('show')/*BS4*/) {
+                        hidePopover(filter, self.bootstrapVersion);
 
-                            if (!self.options.autoRefreshOnFilter && self.pendingInlineFilterRefresh) {
-                                self.refresh(true);
-                            }
+                        if (!self.options.autoRefreshOnFilter && self.pendingInlineFilterRefresh) {
+                            self.refresh(true);
                         }
                     }
                 });
